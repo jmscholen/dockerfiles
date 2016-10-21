@@ -5,13 +5,20 @@ MAINTAINER Jeff Scholen <jmscholen@gmail.com>
 ENV RUBY_MAJOR 2.2
 ENV RUBY_VERSION 2.2.4
 
-ENV JAVA_HOME=/usr
+ENV JAVA_HOME=/usr/bin/java
 
 
-RUN  yum update -y && yum install -y gcc make
+RUN  yum update -y \
+  && yum install -y gcc make \
+  && yum clean all
+
+RUN yum install -y mysql-devel \
+  && yum clean all
 
 # Build ruby
-RUN yum install -y openssl-devel g++ libyaml libyaml-devel libffi libffi-devel readline-devel zlib zlib-devel gdbm gdbm-devel ncurses ncurses-devel bzip2 automake autoconf \
+RUN yum install -y openssl-devel libyaml libyaml-devel libffi \
+  libffi-devel readline-devel zlib zlib-devel gdbm gdbm-devel \
+  ncurses ncurses-devel bzip2 automake autoconf \
   && mkdir -p /usr/src/ruby \
   && curl -SL "https://cache.ruby-lang.org/pub/ruby/$RUBY_MAJOR/ruby-$RUBY_VERSION.tar.gz" \
   | tar -xzC /usr/src/ruby --strip-components=1 \
@@ -30,16 +37,26 @@ RUN yum install -y \
     libxml2 \
     libxml2-devel \
     libxslt \ 
-    libxslt-devel 
+    libxslt-devel  \
+  && yum clean all
 
-RUN yum install -y java-1.7.0-openjdk \
+RUN yum install -y java-1.7.0-openjdk-devel \
     epel-release \
-    nodejs
+  && yum clean all
 
-RUN yum groupinstall "Development Tools" \
-    yum install -y mesa-libGL-devel \
-    yum clean all
+RUN yum install -y nodejs \
+ && yum clean all
 
-RUN yum install -y qt-devel
+RUN yum groups mark install "Development Tools" \
+    yum groups mark convert "Development Tools" \
+    yum groupinstall "Development Tools" \
+  && yum clean all
 
-RUN yum install -y git
+RUN yum install -y qt-devel \
+  && yum clean all
+
+RUN yum install -y git \
+  && yum clean all
+
+RUN yum upgrade -y \
+  && yum install -y gcc-c++
