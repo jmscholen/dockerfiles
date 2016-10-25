@@ -38,6 +38,7 @@ RUN yum install -y \
     libxml2-devel \
     libxslt \ 
     libxslt-devel  \
+    net-tools \
   && yum clean all
 
 RUN yum install -y java-1.7.0-openjdk-devel \
